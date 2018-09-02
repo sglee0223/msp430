@@ -1,0 +1,10 @@
+P1.0 LED
+
+BlinkLED_2
+        new file:   .ccsproject
+        new file:   .cproject
+        new file:   .project
+        new file:   blink.c
+        new file:   lnk_msp430fr6989.cmd
+        new file:   targetConfigs/MSP430FR6989.ccxml
+        new file:   targetConfigs/readme.txt
