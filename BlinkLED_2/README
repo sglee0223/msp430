@@ -1,5 +1,7 @@
 P1.0 LED
 
+use msp430.h
+
 BlinkLED_2
         new file:   .ccsproject
         new file:   .cproject
