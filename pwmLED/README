@@ -1,0 +1,12 @@
+- use msp430.h
+- use 8MHz
+- use P1.3/TA1.2
+
+pwmLED/
+        new file:   .ccsproject
+        new file:   .cproject
+        new file:   .project
+        new file:   lnk_msp430fr6989.cmd
+        new file:   main.c
+        new file:   targetConfigs/MSP430FR6989.ccxml
+        new file:   targetConfigs/readme.txt
