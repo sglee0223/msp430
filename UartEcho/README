@@ -1,0 +1,15 @@
+- use msp430.h
+- P1.0 LED
+- use USCI_A0
+    - P2.1 : UCA0RXD
+    - P2.0 : UCA0TXD
+    - BaudRate : 115200
+ 
+UartEcho/
+        new file:   .ccsproject
+        new file:   .cproject
+        new file:   .project
+        new file:   lnk_msp430fr6989.cmd
+        new file:   main.c
+        new file:   targetConfigs/MSP430FR6989.ccxml
+        new file:   targetConfigs/readme.txt
