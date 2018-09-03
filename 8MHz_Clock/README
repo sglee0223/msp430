@@ -1,0 +1,10 @@
+- use msp430.h
+- use 8MHz Clock
+- P1.0 LED
+
+8MHz_Clock/
+        new file:   .ccsproject
+        new file:   .cproject
+        new file:   .project
+        new file:   lnk_msp430fr6989.cmd
+        new file:   main.c
