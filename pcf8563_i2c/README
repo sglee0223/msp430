@@ -1,0 +1,26 @@
+- use msp430.h
+- working with i2c gpio control
+- not working with i2c interface
+( reveived nack interrupt after start condition )
+- msp430fr6989 development kit backchannel (uart)
+- use USCI_A1
+    - P3.5 : UCA1RXD
+    - P3.4 : UCA1TXD
+    - BaudRate : 115200
+
+pcf8563_i2c/
+        new file:   .ccsproject
+        new file:   .cproject
+        new file:   .project
+        new file:   i2c_gpio.c
+        new file:   i2c_gpio.h
+        new file:   i2c_interface.c
+        new file:   i2c_interface.h
+        new file:   lnk_msp430fr6989.cmd
+        new file:   main.c
+        new file:   myprintf.c
+        new file:   myprintf.h
+        new file:   pcf8563.c
+        new file:   pcf8563.h
+        new file:   targetConfigs/MSP430FR6989.ccxml
+        new file:   targetConfigs/readme.txt
