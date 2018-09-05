@@ -1,0 +1,31 @@
+1. use msp430.h
+2. use spi interface
+- UCA0
+- P1.4 : Chip Select
+- P1.5 : Serial Clock Out (UCA0CLK)
+- P1.6 : Reset
+- P2.0 : Data Out (UCA0SIMO)
+- P2.1 : Data In (UCA0SOMI)
+
+3. msp430fr6989 development kit backchannel (uart)
+- use USCI_A1
+- P3.5 : UCA1RXD
+- P3.4 : UCA1TXD
+- BaudRate : 115200
+
+at45dbxx_spi/
+new file: .ccsproject
+new file: .cproject
+new file: .project
+new file: at45dbxx.c
+new file: at45dbxx.h
+new file: lnk_msp430fr6989.cmd
+new file: main.c
+new file: myprintf.c
+new file: myprintf.h
+new file: spi_gpio.c
+new file: spi_gpio.h
+new file: spi_interface.c
+new file: spi_interface.h
+new file: targetConfigs/MSP430FR6989.ccxml
+new file: targetConfigs/readme.txt
