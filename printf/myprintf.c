@@ -354,6 +354,8 @@ void uart_gpio_init(unsigned char ch)
     switch(ch)
     {
         case USCI_A0:
+            P2SEL0 |= BIT0 | BIT1; // USCI_A0 UART operation
+            P2SEL1 &= ~(BIT0 | BIT1);
             break;
         case USCI_A1:
             // launchpad backchannel
