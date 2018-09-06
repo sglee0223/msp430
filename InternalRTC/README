@@ -1,0 +1,20 @@
+1. use msp430.h
+2. use led
+    - P1.1
+    -P9.7
+3. msp430fr6989 development kit backchannel (uart)
+    - use USCI_A1
+    - P3.5 : UCA1RXD
+    - P3.4 : UCA1TXD
+    - BaudRate : 9600
+
+InternalRTC/
+        new file:   .ccsproject
+        new file:   .cproject
+        new file:   .project
+        new file:   lnk_msp430fr6989.cmd
+        new file:   main.c
+        new file:   myprintf.c
+        new file:   myprintf.h
+        new file:   targetConfigs/MSP430FR6989.ccxml
+        new file:   targetConfigs/readme.txt
