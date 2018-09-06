@@ -32,21 +32,30 @@
 #include "i2c_interface.h"
 #include "i2c_gpio.h"
 #include "pcf8563.h"
+
+#include "myclock.h"
 #include "myprintf.h"
 
 #define LED0_OUT     P1OUT
 #define LED0_DIR     P1DIR
-#define LED0_PIN    BIT1
+#define LED0_PIN     BIT1
 
-void initGPIO()
+int main(void)
 {
+    unsigned int i;
+    unsigned char myClock = CLOCK_16M;
+    unsigned char uartCH = USCI_A1;
+    unsigned char uartBR = BR_115200;
+
+    WDTCTL = WDTPW | WDTHOLD;   // Stop watchdog timer
+
+	clock_init(myClock);
+
     // Configure GPIO
     LED0_OUT &= ~(LED0_PIN); // P1 setup for LED & reset output
     LED0_DIR |= (LED0_PIN);
 
-    // UART pins
-    P3SEL0 |= BIT4 | BIT5;                    // USCI_A1 UART operation
-    P3SEL1 &= ~(BIT4 | BIT5);
+    uart_gpio_init(uartCH);
 
 #ifdef USE_I2C_INTERFACE
     // I2C pins
@@ -60,76 +69,16 @@ void initGPIO()
     // Disable the GPIO power-on default high-impedance mode to activate
     // previously configured port settings
     PM5CTL0 &= ~LOCKLPM5;
-}
-
-void initClockTo8MHz()
-{
-    // Configure one FRAM waitstate as required by the device datasheet for MCLK
-    // operation beyond 8MHz _before_ configuring the clock system.
-    FRCTL0 = FRCTLPW | NWAITS_1;
-
-    // Startup clock system with max DCO setting ~8MHz
-    CSCTL0_H = CSKEY >> 8;                    // Unlock clock registers
-    CSCTL1 = DCOFSEL_3 | DCORSEL;             // Set DCO to 8MHz
-    CSCTL2 = SELA__VLOCLK | SELS__DCOCLK | SELM__DCOCLK;
-    CSCTL3 = DIVA__1 | DIVS__1 | DIVM__1;     // Set all dividers
-    CSCTL0_H = 0;                             // Lock CS registers
-}
-
-void initClockTo16MHz()
-{
-    // Configure one FRAM waitstate as required by the device datasheet for MCLK
-    // operation beyond 8MHz _before_ configuring the clock system.
-    FRCTL0 = FRCTLPW | NWAITS_1;
-
-    // Clock System Setup
-    CSCTL0_H = CSKEY_H;                     // Unlock CS registers
-    CSCTL1 = DCOFSEL_0;                     // Set DCO to 1MHz
-
-    // Set SMCLK = MCLK = DCO, ACLK = LFXTCLK (VLOCLK if unavailable)
-    CSCTL2 = SELA__LFXTCLK | SELS__DCOCLK | SELM__DCOCLK;
-
-    // Per Device Errata set divider to 4 before changing frequency to
-    // prevent out of spec operation from overshoot transient
-    CSCTL3 = DIVA__4 | DIVS__4 | DIVM__4;   // Set all corresponding clk sources to divide by 4 for errata
-    CSCTL1 = DCOFSEL_4 | DCORSEL;           // Set DCO to 16MHz
-
-    // Delay by ~10us to let DCO settle. 60 cycles = 20 cycles buffer + (10us / (1/4MHz))
-    __delay_cycles(60);
-    CSCTL3 = DIVA__1 | DIVS__1 | DIVM__1;   // Set all dividers to 1 for 16MHz operation
-    CSCTL0_H = 0;                           // Lock CS registers
-}
 
 #ifdef USE_I2C_INTERFACE
-void initI2C()
-{
-    UCB0CTLW0 = UCSWRST;                      // Enable SW reset
-    UCB0CTLW0 |= UCMODE_3 | UCMST | UCSSEL__SMCLK | UCSYNC; // I2C master mode, SMCLK
-    UCB0BRW = 160;                            // fSCL = SMCLK/160 = ~100kHz
-    UCB0I2CSA = RTC_ADDR << 1;                   // Slave Address
-    UCB0CTLW0 &= ~UCSWRST;                    // Clear SW reset, resume operation
-    UCB0IE |= UCNACKIE;
-}
-#endif
-
-int main(void)
-{
-    unsigned int i;
-
-    WDTCTL = WDTPW | WDTHOLD;   // Stop watchdog timer
-
-    //initClockTo8MHz();
-    initClockTo16MHz();
-
-    initGPIO();
-#ifdef USE_I2C_INTERFACE
-    initI2C();
+    i2c_interface_init();
 #endif
 #ifdef USE_I2C_GPIO
-    I2C_Init();
+    I2C_Gpio_Init();
 #endif
 
-    uart_init();
+    uart_baudrate_init(myClock, uartCH, uartBR);
+	
     myprintf("pcf8563 Program Start\r\n");
 
     RTC_Init();

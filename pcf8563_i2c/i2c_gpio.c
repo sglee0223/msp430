@@ -8,8 +8,9 @@ Description : I2C software using bit-banging.
 /*-----------------------------------------------------------------------------*/
 /* Header inclusions */
 /*-----------------------------------------------------------------------------*/
-#include <i2c_gpio.h>
 #include <msp430.h>
+
+#include "i2c_gpio.h"
 
 /*-----------------------------------------------------------------------------*/
 /* Local Macro definitions */
@@ -93,7 +94,7 @@ Purpose     : Initialize I2C block
 Parameters  : None
 Return      : None
 --------------------------------------------------------------------------------*/
-void I2C_Init(void)
+void I2C_Gpio_Init(void)
 {
     // Config SCL and SDA as GPIO
     //I2C_PxSEL0   &= ~(SCL + SDA);

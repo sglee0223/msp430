@@ -7,7 +7,7 @@
     nack received after start condition using i2c interface
     so i think maybe some hw work is needed
 */
-//#define USE_I2C_INTERFACE
+#define USE_I2C_INTERFACE
 
 #define MAX_BUFFER_SIZE     20
 
@@ -28,8 +28,8 @@ typedef enum I2C_ModeEnum{
 } I2C_Mode;
 
 extern uint8_t ReceiveBuffer[MAX_BUFFER_SIZE];
-extern I2C_Mode I2C_Master_WriteReg(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, uint8_t count);
-extern I2C_Mode I2C_Master_ReadReg(uint8_t dev_addr, uint8_t reg_addr, uint8_t count);
-extern void CopyArray(uint8_t *source, uint8_t *dest, uint8_t count);
-
+I2C_Mode I2C_Master_WriteReg(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, uint8_t count);
+I2C_Mode I2C_Master_ReadReg(uint8_t dev_addr, uint8_t reg_addr, uint8_t count);
+void CopyArray(uint8_t *source, uint8_t *dest, uint8_t count);
+void i2c_interface_init(void);
 #endif
