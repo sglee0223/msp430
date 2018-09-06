@@ -1,12 +1,16 @@
-- use msp430.h
-- working with i2c gpio control
-- not working with i2c interface
-( reveived nack interrupt after start condition )
-- msp430fr6989 development kit backchannel (uart)
-- use USCI_A1
+1. use msp430.h
+2. working with i2c gpio control
+3. working with i2c interface
+4. msp430fr6989 development kit backchannel (uart)
+5. use USCI_A1
     - P3.5 : UCA1RXD
     - P3.4 : UCA1TXD
     - BaudRate : 115200
+    
+6. i2c interface address
+    - slave address = 1010 001x = A2 or A3
+    - write addr : 0x51 (A2 >> 1)
+    - read addr : 0x51 (A2 >> 1)
 
 pcf8563_i2c/
         new file:   .ccsproject
@@ -18,6 +22,8 @@ pcf8563_i2c/
         new file:   i2c_interface.h
         new file:   lnk_msp430fr6989.cmd
         new file:   main.c
+        new file:   myclock.c
+        new file:   myclock.h        
         new file:   myprintf.c
         new file:   myprintf.h
         new file:   pcf8563.c
