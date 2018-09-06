@@ -1,9 +1,21 @@
-- use msp430.h
-- msp430fr6989 development kit backchannel (uart)
-- use USCI_A1
+1. use msp430.h
+
+2. support channel
+ - USCI_A0
+    - P2.1 : UCA0RXD
+    - P2.0 : UCA0TXD  
+ - USCI_A1
+    - msp430fr6989 development kit backchannel (uart)
     - P3.5 : UCA1RXD
-    - P3.4 : UCA1TXD
-    - BaudRate : 9600
+    - P3.4 : UCA1TXD 
+    
+3. support option
+ - USCI_Ax, CLOCK_1M,  BR_9600
+ - (XXX) USCI_Ax, CLOCK_1M,  BR_115200
+ - USCI_Ax, CLOCK_8M,  BR_9600
+ - USCI_Ax, CLOCK_8M,  BR_115200
+ - USCI_Ax, CLOCK_16M, BR_9600
+ - USCI_Ax, CLOCK_16M, BR_115200
 
 printf/
         new file:   .ccsproject
