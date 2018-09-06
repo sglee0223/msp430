@@ -1,0 +1,9 @@
+
+LCDMEM/
+        new file:   .ccsproject
+        new file:   .cproject
+        new file:   .project
+        new file:   lnk_msp430fr6989.cmd
+        new file:   main.c
+        new file:   targetConfigs/MSP430FR6989.ccxml
+        new file:   targetConfigs/readme.txt
