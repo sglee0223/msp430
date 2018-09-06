@@ -10,7 +10,7 @@ Description : I2C software using bit-banging.
 
 #include <msp430.h>
 
-#define USE_I2C_GPIO
+//#define USE_I2C_GPIO
 
 /*-----------------------------------------------------------------------------*/
 /* Macro definitions  */
@@ -45,7 +45,7 @@ unsigned char Read_SDA(void); // Set SDA as input and return current level of li
 void Clear_SCL(void); // Actively drive SCL signal Low
 void Clear_SDA(void); // Actively drive SDA signal Low
 
-void I2C_Init(void);
+void I2C_Gpio_Init(void);
 void I2C_Start(void);
 void I2C_Stop(void);
 

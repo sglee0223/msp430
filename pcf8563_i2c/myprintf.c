@@ -76,6 +76,15 @@
 #include <stdio.h>
 
 #include "myprintf.h"
+#include "myclock.h"
+
+typedef struct _uartArg {
+    unsigned char br0[3][2];
+    unsigned char br1[3][2];
+    unsigned long mctlw[3][2];
+} uartArg;
+
+uartArg uArg;
 
 /*-------------------------------------------------------------------
 DESCRIPTION: Send one char in TX buffer, if it is not busy. Wait until not busy.
@@ -305,38 +314,117 @@ int myprintf(char *format, ...)
     return pc;
 }
 
-void uart_init(void)
+void printTest(void)
 {
-#if 1
-    UCA1CTLW0 = UCSWRST;                      // Put eUSCI in reset
-    UCA1CTLW0 |= UCSSEL__SMCLK;               // CLK = SMCLK
+    char *ptr = "Hello world!";
+    char *np = 0;
+    long int i = 5;
+    int bs = sizeof(long int)*8;                           // Bit to shift
+    long int mi = ((long int)1 << (bs-1)) + 1;             // Maximum negative number
 
-    // Baud Rate Setting
-    // Use Table 30-5 in Family User Guide
-    UCA1BR0 = 8;
-    UCA1BR1 = 0; // 115200
-    UCA1MCTLW |= UCOS16 | UCBRF_10 | 0xF700;   //0xF700 is UCBRSx = 0xF7
+    myprintf("%s\r\n", ptr);
+    myprintf("printf test\r\n");
+    myprintf("%s is null pointer\r\n", np);
+    myprintf("%d = 5\r\n", (long int)i);
+    myprintf("%d = - max int\r\n", mi);
+    myprintf("Long int 123456789 print out is %u", (long int)123456789);
+    myprintf("\r\nmi in hex is %x\r\n", (long int)mi);
+    myprintf("bs in dec is %u\r\n", (long int)bs);
+    myprintf("char %c = 'a'\r\n", 'a');
+    myprintf("hex %x = ff\r\n", (long int)0xff);
+    myprintf("hex %02x = 00\r\n", (long int)0);
+    myprintf("signed %d = unsigned %u = hex %x\r\n", (long int)-32767, (long int)-32767, (long int)-32767);
+    myprintf("signed %d = unsigned %u = hex %x\r\n", (long int)-3, (long int)-3, (long int)-3);
+    myprintf("%d %s(s)%", (long int)0, "message");
+    myprintf("\r\n");
+    myprintf("%d %s(s) with %%\r\n", (long int)0, "message");
+    myprintf("justif: \"%-10s\"\r\n", "left");
+    myprintf("justif: \"%10s\"\r\n", "right");
+    myprintf(" 3: %04d zero padded\r\n", (long int)3);
+    myprintf(" 3: %-4d left justif.\r\n", (long int)3);
+    myprintf(" 3: %4d right justif.\r\n", (long int)3);
+    myprintf("-3: %04d zero padded\r\n", (long int)-3);
+    myprintf("-3: %-4d left justif.\r\n", (long int)-3);
+    myprintf("-3: %4d right justif.\r\n\r\n\r\n", (long int)-3);
+}
 
-    UCA1CTLW0 &= ~UCSWRST;                    // Initialize eUSCI
-    UCA1IE |= UCRXIE;                         // Enable USCI_A1 RX interrupt
-#endif
+void uart_gpio_init(unsigned char ch)
+{
+    // Configure GPIO
+    switch(ch)
+    {
+        case USCI_A0:
+            P2SEL0 |= BIT0 | BIT1; // USCI_A0 UART operation
+            P2SEL1 &= ~(BIT0 | BIT1);
+            break;
+        case USCI_A1:
+            // launchpad backchannel
+            P3SEL0 |= BIT4 | BIT5; // USCI_A1 UART operation
+            P3SEL1 &= ~(BIT4 | BIT5);
+            break;
+        default:
+            // error
+            break;
+    }
+}
 
-#if 0
-    // Configure USCI_A1 for UART mode
-    UCA1CTLW0 = UCSWRST;                      // Put eUSCI in reset
-    UCA1CTLW0 |= UCSSEL__SMCLK;               // CLK = SMCLK
-    // Baud Rate calculation
-    // 8000000/(16*9600) = 52.083
-    // Fractional portion = 0.083
-    // User's Guide Table 21-4: UCBRSx = 0x04
-    // UCBRFx = int ( (52.083-52)*16) = 1
-    UCA1BR0 = 52;                             // 8000000/16/9600
-    UCA1BR1 = 0x00;
-    UCA1MCTLW |= UCOS16 | UCBRF_1 | 0x4900;
-    UCA1CTLW0 &= ~UCSWRST;                    // Initialize eUSCI
-    UCA1IE |= UCRXIE;                         // Enable USCI_A1 RX interrupt
-#endif
+void uart_baudrate_init(unsigned char clkType, unsigned char ch, unsigned char brType)
+{
+    // MSP430FR6xx Family User's Guide
+    // 779page
+    // Table 30-5. Recommended Settings for Typical Crystals and Baud Rates
 
+    uArg.br0[CLOCK_1M][BR_9600] = 6;
+    uArg.br1[CLOCK_1M][BR_9600] = 0;
+    uArg.mctlw[CLOCK_1M][BR_9600] = UCOS16 | UCBRF_8 | 0x20000;
+
+    uArg.br0[CLOCK_1M][BR_115200] = 0;
+    uArg.br1[CLOCK_1M][BR_115200] = 0;
+    uArg.mctlw[CLOCK_1M][BR_115200] = 0;
+
+    uArg.br0[CLOCK_8M][BR_9600] = 52;
+    uArg.br1[CLOCK_8M][BR_9600] = 0;
+    uArg.mctlw[CLOCK_8M][BR_9600] = UCOS16 | UCBRF_1 | 0x4900;;
+
+    uArg.br0[CLOCK_8M][BR_115200] = 4;
+    uArg.br1[CLOCK_8M][BR_115200] = 0;
+    uArg.mctlw[CLOCK_8M][BR_115200] = UCOS16 | UCBRF_5 | 0x5500;
+
+    uArg.br0[CLOCK_16M][BR_9600] = 104;
+    uArg.br1[CLOCK_16M][BR_9600] = 0;
+    uArg.mctlw[CLOCK_16M][BR_9600] = UCOS16 | UCBRF_2 | 0xD600;
+
+    uArg.br0[CLOCK_16M][BR_115200] = 8;
+    uArg.br1[CLOCK_16M][BR_115200] = 0;
+    uArg.mctlw[CLOCK_16M][BR_115200] = UCOS16 | UCBRF_10 | 0xF700;
+
+    switch(ch)
+    {
+        case USCI_A0:
+            // Configure USCI_A0 for UART mode
+            UCA0CTLW0 = UCSWRST;                      // Put eUSCI in reset
+            UCA0CTLW0 |= UCSSEL__SMCLK;               // CLK = SMCLK
+
+            UCA0BR0 = uArg.br0[clkType][brType];
+            UCA0BR1 = uArg.br1[clkType][brType];
+            UCA0MCTLW |= uArg.mctlw[clkType][brType];
+
+            UCA0CTLW0 &= ~UCSWRST;                    // Initialize eUSCI
+            UCA0IE |= UCRXIE;                         // Enable USCI_A0 RX interrupt
+            break;
+        case USCI_A1:
+            // Configure USCI_A1 for UART mode
+            UCA1CTLW0 = UCSWRST;                      // Put eUSCI in reset
+            UCA1CTLW0 |= UCSSEL__SMCLK;               // CLK = SMCLK
+
+            UCA1BR0 = uArg.br0[clkType][brType];
+            UCA1BR1 = uArg.br1[clkType][brType];
+            UCA1MCTLW |= uArg.mctlw[clkType][brType];
+
+            UCA1CTLW0 &= ~UCSWRST;                    // Initialize eUSCI
+            UCA1IE |= UCRXIE;                         // Enable USCI_A1 RX interrupt
+            break;
+    }
 }
 
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)

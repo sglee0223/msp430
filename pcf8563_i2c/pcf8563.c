@@ -25,7 +25,7 @@ void setI2C(uint8_t reg, uint8_t data)
     txData[0] = data;
 
 #ifdef USE_I2C_INTERFACE
-    I2C_Master_WriteReg(RTC_ADDR << 1, reg, txData, sizeof(txData));
+    I2C_Master_WriteReg(RTC_ADDR, reg, txData, sizeof(txData));
 #endif
 #ifdef USE_I2C_GPIO
     I2C_WriteData((RTC_ADDR), reg, txData, sizeof(txData));
@@ -39,7 +39,7 @@ uint8_t getI2C(uint8_t reg)
     readyI2C();
 
 #ifdef USE_I2C_INTERFACE
-    I2C_Master_ReadReg(RTC_ADDR << 1 | 0x01, reg, sizeof(rxData));
+    I2C_Master_ReadReg(RTC_ADDR, reg, sizeof(rxData));
     CopyArray(ReceiveBuffer, rxData, sizeof(rxData));
 #endif
 #ifdef USE_I2C_GPIO
